@@ -3,16 +3,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 
-# Sample student dataset
-data = {
-    "study_hours": [2, 3, 5, 6, 8, 1, 4, 7, 3, 9],
-    "attendance": [60, 65, 80, 85, 95, 50, 75, 90, 70, 98],
-    "previous_marks": [45, 50, 65, 70, 85, 35, 60, 80, 55, 90],
-    "result": [0, 0, 1, 1, 1, 0, 1, 1, 0, 1]
-}
-
-# Create DataFrame
-df = pd.DataFrame(data)
+# Load dataset from CSV
+df = pd.read_csv("student_performance.csv")
 
 print("Student Dataset:")
 print(df)
@@ -21,27 +13,37 @@ print(df)
 X = df[["study_hours", "attendance", "previous_marks"]]
 y = df["result"]
 
-# Split data into training and testing sets
+# Split the dataset
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X,
+    y,
+    test_size=0.3,
+    random_state=42,
+    stratify=y
 )
 
-# Create and train the model
+# Create and train model
 model = LogisticRegression()
 model.fit(X_train, y_train)
 
 # Make predictions
 y_pred = model.predict(X_test)
 
-# Evaluate the model
+# Calculate accuracy
 accuracy = accuracy_score(y_test, y_pred)
 
 print("\nModel Accuracy:", accuracy)
+
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred, zero_division=0))
 
-# Predict a new student's result
-new_student = [[6, 85, 70]]
+# Predict a new student
+new_student = pd.DataFrame({
+    "study_hours": [6],
+    "attendance": [85],
+    "previous_marks": [70]
+})
+
 prediction = model.predict(new_student)
 
 if prediction[0] == 1:
